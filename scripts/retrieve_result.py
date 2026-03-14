@@ -18,21 +18,11 @@ from typing import Optional
 
 
 # API Configuration
+API_BASE = "https://humbot.ai/api/humbot/v1"
+
+# Get API key from environment or prompt user
 import os
-
-API_BASE = "https://test123.humbot.ai/api/humbot/v1"
-API_KEY = os.getenv("HUMBOT_API_KEY")
-AUTH_HEADER = os.getenv("HUMBOT_AUTH_HEADER")
-
-if not API_KEY:
-    print("Error: HUMBOT_API_KEY environment variable not set", file=sys.stderr)
-    print("Set it with: export HUMBOT_API_KEY='your-api-key'", file=sys.stderr)
-    sys.exit(1)
-
-if not AUTH_HEADER:
-    print("Error: HUMBOT_AUTH_HEADER environment variable not set", file=sys.stderr)
-    print("Set it with: export HUMBOT_AUTH_HEADER='your-auth-header'", file=sys.stderr)
-    sys.exit(1)
+API_KEY = os.getenv("HUMBOT_API_KEY", "")
 
 
 def retrieve_result(task_id: str) -> dict:
@@ -45,10 +35,15 @@ def retrieve_result(task_id: str) -> dict:
     Returns:
         dict with result data or error info
     """
+    if not API_KEY:
+        return {
+            "success": False,
+            "error": "HUMBOT_API_KEY not set. Please get your API key from https://humbot.ai/ai-humanizer-api"
+        }
+    
     url = f"{API_BASE}/retrieve"
     
     headers = {
-        "Authorization": AUTH_HEADER,
         "api-key": API_KEY,
     }
     

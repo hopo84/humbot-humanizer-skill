@@ -7,6 +7,39 @@ description: Transform AI-generated text into more natural, human-like writing u
 
 Transform AI-generated or robotic text into natural, human-like writing using the Humbot API.
 
+## ⚠️ First-Time Usage Check
+
+**IMPORTANT:** Before using this skill for the first time, check if the API key is configured:
+
+```bash
+if [ -z "$HUMBOT_API_KEY" ]; then
+  echo "API key not configured"
+fi
+```
+
+If not configured, **immediately show the user**:
+
+---
+
+**🔑 API Key Required**
+
+To use the Humbot humanizer, you need an API key:
+
+1. Visit **https://humbot.ai/ai-humanizer-api**
+2. Register or log in to get your API key
+3. Configure it by running:
+   ```bash
+   echo 'export HUMBOT_API_KEY="your_api_key_here"' >> ~/.bashrc
+   source ~/.bashrc
+   ```
+4. Replace `your_api_key_here` with your actual key
+
+Once configured, I can humanize text for you! Just say "humanize this: [text]"
+
+---
+
+**Do not proceed** with humanization until the user has configured their API key.
+
 ## What This Skill Does
 
 This skill takes text that sounds artificial, robotic, or AI-generated and rewrites it to sound more natural and human. It uses the Humbot API which specializes in:
@@ -114,38 +147,44 @@ If the detection score is low (<70) or the user isn't satisfied, offer to:
 - **Review output**: Always review the humanized text - it may need minor adjustments
 - **Multiple attempts**: If the first result isn't great, trying again with a different model type often helps
 
-## Credential Management
+## Setup & API Key Configuration
 
-**⚠️ Important: API credentials must be configured before using this skill.**
+### First-Time Setup
 
-### Setup Instructions
+When a user installs this skill, **you must guide them through API key setup**:
 
-1. **Get credentials** from [Humbot.ai](https://humbot.ai):
-   - API Key (format: `api_key_xxxxx`)
-   - Authorization Header (format: `Basic xxxxx`)
+1. **Prompt the user to get their API key:**
+   
+   "To use the Humbot humanizer, you need an API key. Please:
+   
+   1. Visit https://humbot.ai/ai-humanizer-api
+   2. Register for an account (if you don't have one)
+   3. Get your API key from the dashboard
+   4. Send me your API key so I can configure it for you"
 
-2. **Set environment variables**:
+2. **Once they provide the key**, store it as an environment variable:
+
    ```bash
-   export HUMBOT_API_KEY="your_api_key_here"
-   export HUMBOT_AUTH_HEADER="your_auth_header_here"
-   ```
-
-3. **Make them permanent** (add to ~/.bashrc or ~/.zshrc):
-   ```bash
-   echo 'export HUMBOT_API_KEY="your_api_key_here"' >> ~/.bashrc
-   echo 'export HUMBOT_AUTH_HEADER="your_auth_header_here"' >> ~/.bashrc
+   echo 'export HUMBOT_API_KEY="their_api_key_here"' >> ~/.bashrc
    source ~/.bashrc
    ```
+   
+   Or for this session only:
+   ```bash
+   export HUMBOT_API_KEY="their_api_key_here"
+   ```
 
-### Verification
+3. **Verify the setup** by running a test:
+   ```bash
+   python scripts/create_task.py "Test text to humanize"
+   ```
 
-Test your credentials:
-```bash
-cd ~/.openclaw/workspace/skills/humbot-humanizer
-python scripts/create_task.py "Test text" --model-type Quick
-```
+### Important Notes
 
-If you see "Error: HUMBOT_API_KEY environment variable not set", credentials are not configured.
+- The API key is stored in the `HUMBOT_API_KEY` environment variable
+- Never share or expose the API key in conversations or public channels
+- If the user sees an error about missing API key, guide them through setup again
+- The scripts will automatically use the environment variable
 
 ## Examples
 

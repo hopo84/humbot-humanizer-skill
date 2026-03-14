@@ -1,179 +1,165 @@
-# Humbot Humanizer - OpenClaw Skill
+# Humbot Humanizer Skill
 
 Transform AI-generated text into natural, human-like writing using the Humbot API.
 
-[![OpenClaw](https://img.shields.io/badge/OpenClaw-Skill-blue)](https://openclaw.ai)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
 ## 🚀 Quick Start
 
-### 1. Install the Skill
+### 1. Get Your API Key
+
+Before using this skill, you need a Humbot API key:
+
+1. Visit **https://humbot.ai/ai-humanizer-api**
+2. Register for an account
+3. Navigate to the API section in your dashboard
+4. Copy your API key
+
+### 2. Configure the API Key
+
+Set the API key as an environment variable:
 
 ```bash
-# If using ClawHub
-clawhub install humbot-humanizer
+# Permanent (recommended)
+echo 'export HUMBOT_API_KEY="your_api_key_here"' >> ~/.bashrc
+source ~/.bashrc
 
-# Or clone manually
-git clone https://github.com/hopo84/humbot-humanizer-skill.git ~/.openclaw/workspace/skills/humbot-humanizer
+# Or temporary (current session only)
+export HUMBOT_API_KEY="your_api_key_here"
 ```
 
-### 2. Get Humbot API Credentials
+**Important:** Replace `your_api_key_here` with your actual API key from Humbot.
 
-Visit [Humbot.ai](https://humbot.ai) to:
-1. Sign up for an account
-2. Get your API key
-3. Get your authorization header
+### 3. Test the Setup
 
-### 3. Configure Environment Variables
-
-```bash
-# Add to your ~/.bashrc or ~/.zshrc
-export HUMBOT_API_KEY="api_key_xxxxxxxxxxxxx"
-export HUMBOT_AUTH_HEADER="Basic xxxxxxxxxxxx"
-
-# Or create a .env file (not tracked by git)
-cp .env.example .env
-# Edit .env with your credentials
-source .env
-```
-
-### 4. Use the Skill
-
-Just ask your OpenClaw agent:
-
-```
-"Humanize this text: [your AI-generated text]"
-"Make this sound more natural: [text]"
-"Rewrite this to avoid AI detection: [text]"
-```
-
-## 📖 What It Does
-
-This skill:
-- ✅ Removes AI-typical patterns and phrases
-- ✅ Adds natural variation and flow
-- ✅ Makes text sound conversational and authentic
-- ✅ Helps content pass AI detection tools
-- ✅ Provides detection scores (0-100)
-
-## 🎯 Model Types
-
-- **Quick** (default) - Fast, good for most content
-- **Standard** - Balanced quality and speed  
-- **Advanced** - Highest quality, slower
-
-## 🔧 Manual Usage
-
-### Create a humanization task:
+Verify everything works:
 
 ```bash
 cd ~/.openclaw/workspace/skills/humbot-humanizer
-
-# From text
-python scripts/create_task.py "Your AI text here" --model-type Standard
-
-# From file
-python scripts/create_task.py --file input.txt --model-type Advanced
+python scripts/create_task.py "This is a test sentence to humanize."
 ```
 
-This returns a task ID.
-
-### Retrieve results:
+If successful, you'll get a task ID. You can then retrieve the result:
 
 ```bash
 python scripts/retrieve_result.py <task_id> --wait
 ```
 
-## 📊 Example Output
+## 📖 Usage
 
-```
-============================================================
-HUMANIZED TEXT
-============================================================
-AI has been one of the most disruptive technologies in the world
-over the last several years, radically changing our views...
+### Basic Usage
 
-============================================================
-STATISTICS
-============================================================
-Original:    111 words
-Humanized:   124 words
-Detection:   HUMAN (score: 82/100)
-Model:       Advanced
-```
-
-## 🛡️ Security
-
-**⚠️ This skill does NOT include API credentials in the code.**
-
-You must configure your own credentials via environment variables. Never commit your `.env` file or credentials to version control.
-
-## 📋 Requirements
-
-- Python 3.7+
-- `requests` library
-- Valid Humbot API credentials
-
-## 📁 Project Structure
-
-```
-humbot-humanizer-skill/
-├── SKILL.md              # Skill definition for OpenClaw
-├── README.md             # This file
-├── LICENSE               # MIT License
-├── .env.example          # Example environment configuration
-├── .gitignore           # Git ignore rules
-├── scripts/
-│   ├── create_task.py   # Submit text for humanization
-│   └── retrieve_result.py # Retrieve humanized results
-├── references/
-│   └── (documentation)
-└── evals/
-    └── evals.json       # Test cases
-```
-
-## 🧪 Testing
-
-Test the skill with sample text:
-
+**Humanize text directly:**
 ```bash
-export HUMBOT_API_KEY="your_key"
-export HUMBOT_AUTH_HEADER="your_header"
-
-cd scripts
-python create_task.py "This is a test of the humanization system." --model-type Quick
-# Returns: task_xxxxx
-
-python retrieve_result.py task_xxxxx --wait
+python scripts/create_task.py "Your AI-generated text here"
 ```
+
+**Humanize from a file:**
+```bash
+python scripts/create_task.py --file input.txt
+```
+
+**Choose quality mode:**
+```bash
+python scripts/create_task.py "Text here" --model-type Advanced
+```
+
+Model types:
+- `Quick` - Fast processing (default)
+- `Standard` - Balanced quality and speed
+- `Advanced` - Highest quality, slower
+
+### Retrieve Results
+
+**Get result by task ID:**
+```bash
+python scripts/retrieve_result.py <task_id>
+```
+
+**Auto-wait for completion:**
+```bash
+python scripts/retrieve_result.py <task_id> --wait
+```
+
+**JSON output:**
+```bash
+python scripts/retrieve_result.py <task_id> --json
+```
+
+## 🤖 AI Assistant Usage
+
+When using this skill through the OpenClaw AI assistant, simply say:
+
+- "Humanize this text: [paste text]"
+- "Make this sound more natural: [text]"
+- "Rewrite this to pass AI detection: [text]"
+- "Use Humbot to humanize [file/text]"
+
+The AI will:
+1. Check if your API key is configured
+2. If not, guide you through the setup process
+3. Submit your text to Humbot
+4. Wait for results and show you the humanized output with statistics
+
+## 🔧 Troubleshooting
+
+### "HUMBOT_API_KEY not set" error
+
+**Solution:** Follow the setup steps above to configure your API key.
+
+### API returns authentication error
+
+**Possible causes:**
+- Invalid API key
+- Expired API key
+- Account not activated
+
+**Solution:** Log into https://humbot.ai and verify your API key is active.
+
+### Task takes too long
+
+**Normal behavior:** 
+- Quick mode: 5-15 seconds
+- Standard mode: 15-30 seconds  
+- Advanced mode: 30-60 seconds
+
+For very long texts, processing may take longer. The scripts will automatically wait and poll for results.
+
+### Network timeout
+
+**Solution:** Check your internet connection and try again. The API endpoints are:
+- Create: `https://humbot.ai/api/humbot/v1/create`
+- Retrieve: `https://humbot.ai/api/humbot/v1/retrieve`
+
+## 🔒 Security
+
+- **Never share your API key** in conversations, logs, or public channels
+- Store it as an environment variable, not in code
+- The skill scripts automatically read from `HUMBOT_API_KEY` environment variable
+- Revoke and regenerate your key if you suspect it's been compromised
+
+## 📊 What You Get
+
+The humanized output includes:
+
+- **Humanized text** - The rewritten, natural-sounding version
+- **Word count** - Original vs humanized word counts
+- **Detection score** - AI detection likelihood (0-100, higher = more human-like)
+- **Detection result** - Pass/Fail for AI detection
+- **Model used** - Which quality tier was used
+
+## 💡 Tips for Best Results
+
+1. **Longer is better** - 100+ words produce better results than short snippets
+2. **Clean input** - Remove code blocks, special formatting before submitting
+3. **Start with Quick** - Test with Quick mode first, upgrade to Advanced for important content
+4. **Review output** - Always review the humanized text; it may need minor tweaks
+5. **Try again** - If not satisfied, try a different model tier
+
+## 🆘 Support
+
+- **Humbot API docs:** https://humbot.ai/ai-humanizer-api
+- **OpenClaw docs:** https://docs.openclaw.ai
+- **Skill issues:** Report in the OpenClaw Discord or GitHub
 
 ## 📝 License
 
-MIT License - See [LICENSE](LICENSE) file for details
-
-## 🤝 Contributing
-
-Contributions welcome! Please:
-1. Fork the repo
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 🐛 Issues
-
-Found a bug? Have a feature request? Please open an issue on [GitHub](https://github.com/hopo84/humbot-humanizer-skill/issues).
-
-## 💬 Support
-
-- **OpenClaw Docs**: [docs.openclaw.ai](https://docs.openclaw.ai)
-- **Humbot**: [humbot.ai](https://humbot.ai)
-- **Discussions**: [GitHub Discussions](https://github.com/hopo84/humbot-humanizer-skill/discussions)
-
-## 🌟 Star History
-
-If you find this skill useful, please give it a star on GitHub!
-
----
-
-Made with 🪄 for [OpenClaw](https://openclaw.ai)
+This skill is provided as-is for use with OpenClaw. The Humbot API is a commercial service - check their pricing and terms at https://humbot.ai
